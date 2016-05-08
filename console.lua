@@ -1,6 +1,8 @@
 local utf8 = require("utf8")
-local console = {}
 
+local luake = {}
+
+console = {}
 console.partial = ""
 console.echo = false
 console.lines = {}
@@ -14,77 +16,84 @@ console.input = console.emptyinput
 console.nlines = 10
 console.bgcolor = { 128, 128, 128 }
 console.fgcolor = { 0, 0, 0 }
+console.__index = console
 
-function console.lineentered(line)
+function luake.newConsole()
+  local o = {__index = console }
+  setmetatable(o, console)
+  return o
+end
+
+function console:lineentered(line)
   -- Override for line input processing
   print('callback invoked...')
 end
 
-function console.print(text)
-  local drawable = love.graphics.newText(console.font, text)
-  table.insert(console.lines, drawable)
+function console:print(text)
+  local drawable = love.graphics.newText(self.font, text)
+  table.insert(self.lines, drawable)
 end
 
-function console.keypressed(key)
+function console:keypressed(key)
   -- See https://love2d.org/wiki/utf8 for overview of utf8
   if key == "backspace" then
-    local offset = utf8.offset(console.partial, -1)
+    local offset = utf8.offset(self.partial, -1)
     if offset then
-      console.partial = string.sub(console.partial, 1, offset-1)
-      console.input = love.graphics.newText(console.font, console.prompt .. console.partial)
+      self.partial = string.sub(self.partial, 1, offset-1)
+      self.input = love.graphics.newText(self.font, self.prompt .. self.partial)
     end
   elseif key == 'return' then
-    console.lineentered(console.partial) -- callback for input processing
-    console.print(console.partial)
-    console.partial = ""
-    console.input = console.emptyinput
+    self.lineentered(self.partial) -- callback for input processing
+    self:print(self.partial)
+    self.partial = ""
+    self.input = self.emptyinput
   end
 end
 
-function console.textinput(text)
+function console:textinput(text)
   -- Toggle focus
-  if text == console.focustext then
-    console.hasFocus = not console.hasFocus
+  if text == self.focustext then
+    self.hasFocus = not self.hasFocus
     return
   end
 
-  if not console.hasFocus then
+  if not self.hasFocus then
     return
   end
-  -- Apply text to *Focused* console
+  -- Apply text to *Focused* self
   if string.gmatch(text,"[%w%d \t]") then
-    console.partial = console.partial .. text
-    console.input = love.graphics.newText(console.font, console.prompt .. console.partial)
+    self.partial = self.partial .. text
+    self.input = love.graphics.newText(self.font, self.prompt .. self.partial)
   end
 end
 
-function console.draw()
-  if not console.hasFocus then
+function console:draw()
+  if not self.hasFocus then
     return
   end
 
-  local height = console.font:getHeight()
+  local height = self.font:getHeight()
 
-  --draw console background
-  love.graphics.setColor(console.bgcolor)
-  love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), (1+console.nlines)*height)
+  --draw self background
+  love.graphics.setColor(self.bgcolor)
+  love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), (1+self.nlines)*height)
 
   -- draw prompt and any input
-  love.graphics.setColor(console.fgcolor)
-  if console.input then
-    love.graphics.draw(console.input, 0, height * console.nlines)
+  love.graphics.setColor(self.fgcolor)
+  if self.input then
+    love.graphics.draw(self.input, 0, height * self.nlines)
   end
 
-  local nlines = console.nlines
-  local i = #console.lines
+  local nlines = self.nlines
+  local i = #self.lines
   while i > 0 do
     if nlines < 1 then
       break
     end
-    love.graphics.draw(console.lines[i], 0, (nlines-1)*height)
+    love.graphics.draw(self.lines[i], 0, (nlines-1)*height)
     i = i - 1
     nlines = nlines - 1
   end
 end
 
-return console
+return luake
