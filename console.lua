@@ -1,4 +1,4 @@
-local utf8 = require("utf8")
+klocal utf8 = require("utf8")
 
 local luake = {}
 
@@ -74,7 +74,7 @@ function console:draw()
 
   local height = self.font:getHeight()
 
-  --draw self background
+  --draw console background
   love.graphics.setColor(self.bgcolor)
   love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), (1+self.nlines)*height)
 
