@@ -2,7 +2,9 @@ local utf8 = require("utf8")
 
 local luake = {}
 
-console = {}
+local console = {}
+console.x = 0
+console.y = 0
 console.partial = ""
 console.echo = false
 console.lines = {}
@@ -76,12 +78,12 @@ function console:draw()
 
   --draw console background
   love.graphics.setColor(self.bgcolor)
-  love.graphics.rectangle('fill', 0, 0, love.graphics.getWidth(), (1+self.nlines)*height)
+  love.graphics.rectangle('fill', self.x, self.y, love.graphics.getWidth(), (1+self.nlines)*height)
 
   -- draw prompt and any input
   love.graphics.setColor(self.fgcolor)
   if self.input then
-    love.graphics.draw(self.input, 0, height * self.nlines)
+    love.graphics.draw(self.input, self.x, height * self.nlines + self.y)
   end
 
   local nlines = self.nlines
@@ -90,7 +92,7 @@ function console:draw()
     if nlines < 1 then
       break
     end
-    love.graphics.draw(self.lines[i], 0, (nlines-1)*height)
+    love.graphics.draw(self.lines[i], self.x, (nlines-1)*height + self.y)
     i = i - 1
     nlines = nlines - 1
   end
