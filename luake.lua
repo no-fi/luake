@@ -1,4 +1,5 @@
 local utf8 = require("utf8")
+tween = require("tween")
 
 local luake = {}
 
@@ -9,7 +10,7 @@ console.partial = ""
 console.echo = false
 console.lines = {}
 console.nlines = 10
-console.hasFocus = true
+console.hasFocus = false
 console.focustext = "~"
 console.text = nil
 console.prompt = "]"
@@ -23,7 +24,16 @@ console.__index = console
 function luake.newConsole()
   local o = {__index = console }
   setmetatable(o, console)
+  local y1 = -1 * (1 + o.nlines) * o.font:getHeight()
+  o.y = y1
+  o.tweenDown = tween.new(1, o, { y = 0 }, 'outBounce')
   return o
+end
+
+function console:update(dt)
+  if self.hasFocus then
+    self.tweenDown:update(dt)
+  end
 end
 
 function console:lineentered(line)
@@ -55,6 +65,7 @@ end
 function console:textinput(text)
   -- Toggle focus
   if text == self.focustext then
+    self.tweenDown:reset()
     self.hasFocus = not self.hasFocus
     return
   end
@@ -70,10 +81,6 @@ function console:textinput(text)
 end
 
 function console:draw()
-  if not self.hasFocus then
-    return
-  end
-
   local height = self.font:getHeight()
 
   --draw console background
