@@ -1,4 +1,4 @@
-klocal utf8 = require("utf8")
+local utf8 = require("utf8")
 
 local luake = {}
 
@@ -6,14 +6,14 @@ console = {}
 console.partial = ""
 console.echo = false
 console.lines = {}
+console.nlines = 10
 console.hasFocus = true
 console.focustext = "~"
 console.text = nil
-console.prompt = ']'
+console.prompt = "]"
 console.font = love.graphics.getFont()
 console.emptyinput = love.graphics.newText(console.font, console.prompt)
 console.input = console.emptyinput
-console.nlines = 10
 console.bgcolor = { 128, 128, 128 }
 console.fgcolor = { 0, 0, 0 }
 console.__index = console
@@ -44,7 +44,7 @@ function console:keypressed(key)
     end
   elseif key == 'return' then
     self.lineentered(self.partial) -- callback for input processing
-    self:print(self.partial)
+    self:print(self.partial) -- echo input
     self.partial = ""
     self.input = self.emptyinput
   end
