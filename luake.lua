@@ -17,8 +17,8 @@ console.prompt = "]"
 console.font = love.graphics.getFont()
 console.emptyinput = love.graphics.newText(console.font, console.prompt)
 console.input = console.emptyinput
-console.bgcolor = { 128, 128, 128 }
-console.fgcolor = { 0, 0, 0 }
+console.bgcolor = { 128, 128, 128, 85 }
+console.fgcolor = { 255, 255, 255 }
 console.__index = console
 
 function luake.newConsole()
