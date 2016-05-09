@@ -1,4 +1,5 @@
 local utf8 = require("utf8")
+tween = require("tween")
 
 local luake = {}
 
@@ -9,21 +10,32 @@ console.partial = ""
 console.echo = false
 console.lines = {}
 console.nlines = 10
-console.hasFocus = true
+console.hasFocus = false
 console.focustext = "~"
 console.text = nil
 console.prompt = "]"
 console.font = love.graphics.getFont()
 console.emptyinput = love.graphics.newText(console.font, console.prompt)
 console.input = console.emptyinput
-console.bgcolor = { 128, 128, 128 }
-console.fgcolor = { 0, 0, 0 }
+console.bgcolor = { 128, 128, 128, 85 }
+console.fgcolor = { 255, 255, 255 }
 console.__index = console
 
 function luake.newConsole()
   local o = {__index = console }
   setmetatable(o, console)
+  local y1 = -1 * (1 + o.nlines) * o.font:getHeight()
+  o.y = y1
+  o.tween = tween.new(1, o, { y = 0 }, 'outBounce')
   return o
+end
+
+function console:update(dt)
+  if self.hasFocus then
+    self.tween:update(dt)
+  else
+    self.tween:update(-dt)
+  end
 end
 
 function console:lineentered(line)
@@ -55,6 +67,7 @@ end
 function console:textinput(text)
   -- Toggle focus
   if text == self.focustext then
+    --self.tween:reset()
     self.hasFocus = not self.hasFocus
     return
   end
@@ -70,10 +83,6 @@ function console:textinput(text)
 end
 
 function console:draw()
-  if not self.hasFocus then
-    return
-  end
-
   local height = self.font:getHeight()
 
   --draw console background
