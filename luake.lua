@@ -14,8 +14,13 @@ console.hasFocus = false
 console.focustext = "~"
 console.text = nil
 console.prompt = "]"
-console.font = love.graphics.getFont()
+console.font = love.graphics.newFont("LiberationMono-Regular.ttf", 12)
 console.emptyinput = love.graphics.newText(console.font, console.prompt)
+console.cursor = "█"
+console.isblinked = true
+console.blinkrate = 0.5 --in seconds
+console.elapsed = 0
+
 console.input = console.emptyinput
 console.bgcolor = { 128, 128, 128, 85 }
 console.fgcolor = { 255, 255, 255 }
@@ -31,6 +36,13 @@ function luake.newConsole()
 end
 
 function console:update(dt)
+  self.elapsed = self.elapsed + dt
+  while self.elapsed >= self.blinkrate do
+    --loop in case duration passed several times
+    self.isblinked = not self.isblinked
+    self.elapsed = self.elapsed - self.blinkrate
+  end
+
   if self.hasFocus then
     self.tween:update(dt)
   else
@@ -54,13 +66,13 @@ function console:keypressed(key)
     local offset = utf8.offset(self.partial, -1)
     if offset then
       self.partial = string.sub(self.partial, 1, offset-1)
-      self.input = love.graphics.newText(self.font, self.prompt .. self.partial)
+      --self.input = love.graphics.newText(self.font, self.prompt .. self.partial)
     end
   elseif key == 'return' then
     self.lineentered(self.partial) -- callback for input processing
     self:print(self.partial) -- echo input
     self.partial = ""
-    self.input = self.emptyinput
+    --self.input = self.emptyinput
   end
 end
 
@@ -78,7 +90,7 @@ function console:textinput(text)
   -- Apply text to *Focused* self
   if string.gmatch(text,"[%w%d \t]") then
     self.partial = self.partial .. text
-    self.input = love.graphics.newText(self.font, self.prompt .. self.partial)
+    --self.input = love.graphics.newText(self.font, self.prompt .. self.partial)
   end
 end
 
@@ -89,11 +101,12 @@ function console:draw()
   love.graphics.setColor(self.bgcolor)
   love.graphics.rectangle('fill', self.x, self.y, love.graphics.getWidth(), (1+self.nlines)*height)
 
-  -- draw prompt and any input
+  -- draw prompt, cursor,  and any input
   love.graphics.setColor(self.fgcolor)
-  if self.input then
-    love.graphics.draw(self.input, self.x, height * self.nlines + self.y)
-  end
+  local cursor = self.isblinked and self.cursor or ""
+  local input = love.graphics.newText(self.font, self.prompt .. self.partial .. cursor)
+  love.graphics.draw(input, self.x, height * self.nlines + self.y)
+
 
   local nlines = self.nlines
   local i = #self.lines
