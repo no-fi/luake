@@ -1,6 +1,8 @@
 luake = require("luake")
 
-console = luake.newConsole()
+
+local console = luake.newConsole()
+local bgtext = love.graphics.newText(love.graphics.getFont(), "This is in background.")
 
 function love.load()
   console:print("Hello World!")
@@ -11,6 +13,7 @@ function love.update(dt)
 end
 
 function love.draw()
+  love.graphics.draw(bgtext, 0, 0)
   console:draw()
 end
 
