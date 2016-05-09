@@ -26,13 +26,15 @@ function luake.newConsole()
   setmetatable(o, console)
   local y1 = -1 * (1 + o.nlines) * o.font:getHeight()
   o.y = y1
-  o.tweenDown = tween.new(1, o, { y = 0 }, 'outBounce')
+  o.tween = tween.new(1, o, { y = 0 }, 'outBounce')
   return o
 end
 
 function console:update(dt)
   if self.hasFocus then
-    self.tweenDown:update(dt)
+    self.tween:update(dt)
+  else
+    self.tween:update(-dt)
   end
 end
 
@@ -65,7 +67,7 @@ end
 function console:textinput(text)
   -- Toggle focus
   if text == self.focustext then
-    self.tweenDown:reset()
+    --self.tween:reset()
     self.hasFocus = not self.hasFocus
     return
   end
