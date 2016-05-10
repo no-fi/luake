@@ -68,13 +68,11 @@ function console:keypressed(key)
     local offset = utf8.offset(self.partial, -1)
     if offset then
       self.partial = string.sub(self.partial, 1, offset-1)
-      --self.input = love.graphics.newText(self.font, self.prompt .. self.partial)
     end
   elseif key == 'return' then
     self.lineentered(self.partial) -- callback for input processing
     self:print(self.partial) -- echo input
     self.partial = ""
-    --self.input = self.emptyinput
   end
   self:resetCursorBlink()
 end
@@ -98,7 +96,6 @@ function console:textinput(text)
   -- Apply text to *Focused* self
   if string.gmatch(text,"[%w%d \t]") then
     self.partial = self.partial .. text
-    --self.input = love.graphics.newText(self.font, self.prompt .. self.partial)
   end
   self:resetCursorBlink()
 end
