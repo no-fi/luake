@@ -37,6 +37,7 @@ function luake.newConsole()
 end
 
 function console:update(dt)
+  --update cursor
   self.elapsed = self.elapsed + dt
   while self.elapsed >= self.blinkrate do
     --loop in case duration passed several times
