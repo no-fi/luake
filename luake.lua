@@ -16,6 +16,7 @@ console.text = nil
 console.prompt = "]"
 console.font = love.graphics.newFont("LiberationMono-Regular.ttf", 12)
 console.emptyinput = love.graphics.newText(console.font, console.prompt)
+
 console.cursor = "█"
 console.isblinked = true
 console.blinkrate = 0.5 --in seconds
@@ -74,6 +75,12 @@ function console:keypressed(key)
     self.partial = ""
     --self.input = self.emptyinput
   end
+  self:resetCursorBlink()
+end
+
+function console:resetCursorBlink()
+  self.isblinked = true
+  self.elapsed = 0
 end
 
 function console:textinput(text)
@@ -92,6 +99,7 @@ function console:textinput(text)
     self.partial = self.partial .. text
     --self.input = love.graphics.newText(self.font, self.prompt .. self.partial)
   end
+  self:resetCursorBlink()
 end
 
 function console:draw()
