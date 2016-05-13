@@ -17,10 +17,10 @@ function love.draw()
   console:draw()
 end
 
-function love.textinput(text)
-  console:textinput(text)
+function love.textInput(text)
+  console:textInput(text)
 end
 
-function love.keypressed(key)
-  console:keypressed(key)
+function love.keyPressed(key)
+  console:keyPressed(key)
 end
