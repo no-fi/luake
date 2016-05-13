@@ -61,7 +61,7 @@ function console:print(text)
   table.insert(self.lines, drawable)
 end
 
-function console:keyPressed(key)
+function console:keypressed(key)
   -- See https://love2d.org/wiki/utf8 for overview of utf8
   if key == "backspace" then
     local offset = utf8.offset(self.partial, -1)
@@ -81,7 +81,7 @@ function console:resetCursorBlink()
   self.elapsed = 0
 end
 
-function console:textInput(text)
+function console:textinput(text)
   -- Toggle focus
   if text == self.focusText then
     --self.tween:reset()
