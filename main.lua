@@ -17,7 +17,7 @@ function love.draw()
   console:draw()
 end
 
-function love.textpnput(text)
+function love.textinput(text)
   console:textinput(text)
 end
 
