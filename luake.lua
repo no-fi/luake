@@ -26,11 +26,13 @@ console.bgColor = { 128, 128, 128, 85 }
 console.fgColor = { 255, 255, 255 }
 console.__index = console
 
+console.tweenIsComplete = true
+console.tween = nil
+
 function luake.newConsole()
   local o = {__index = console }
   setmetatable(o, console)
-  local y1 = -1 * (1 + o.nLines) * o.font:getHeight()
-  o.y = y1
+  o.y = -1 * (1 + o.nLines) * o.font:getHeight()
   return o
 end
 
@@ -43,7 +45,7 @@ function console:update(dt)
     self.elapsed = self.elapsed - self.blinkRate
   end
 
-  if self.tween then self.tween:update(dt) end
+  if self.tween then self.tweenIsComplete = self.tween:update(dt) end
 end
 
 function console:lineEntered(line)
@@ -79,16 +81,12 @@ end
 function console:textinput(text)
   -- Toggle focus
   if text == self.focusText then
-    --self.tween:reset()
-    --self.hasFocus = not self.hasFocus
     self:toggleFocus()
     return
   end
 
-  print(self.hasFocus)
-  if not self.hasFocus then
-    return
-  end
+  if not self.hasFocus then return end
+
   -- Apply text to *Focused* self
   if string.gmatch(text,"[%w%d \t]") then
     self.partial = self.partial .. text
@@ -107,6 +105,9 @@ function console:toggleFocus()
 end
 
 function console:draw()
+  -- skip drawing if rollup animation complete and console has lost focus
+  if not self.hasFocus and self.tweenIsComplete then return end
+
   local height = self.font:getHeight()
 
   --draw console background
