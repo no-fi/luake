@@ -40,7 +40,7 @@ function console:getDimensions()
   local width = love.graphics.getWidth()
   local height = (1 + self.nLines) * self.font:getHeight()
   return width, height
-  end
+end
 
 function console:update(dt)
   --update cursor
@@ -60,7 +60,7 @@ function console:lineEntered(line)
 end
 
 function console:print(text)
-  local drawable = love.graphics.newText(self.font, text)
+  local drawable = love.graphics.newText(self.font, self.prompt .. text)
   table.insert(self.lines, drawable)
 end
 
@@ -106,7 +106,7 @@ function console:toggleFocus()
     self.tween = tween.new(1, self, { y = 0 }, 'inBounce')
   else
     local _, y1 = self:getDimensions()
-    self.tween = tween.new(1, self, { y = -y1  }, 'outExpo')
+    self.tween = tween.new(1, self, { y = -y1 }, 'outExpo')
   end
 end
 
