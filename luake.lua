@@ -36,6 +36,12 @@ function luake.newConsole()
   return o
 end
 
+function console:getDimensions()
+  local width = love.graphics.getWidth()
+  local height = (1 + self.nLines) * self.font:getHeight()
+  return width, height
+  end
+
 function console:update(dt)
   --update cursor
   self.elapsed = self.elapsed + dt
@@ -99,8 +105,8 @@ function console:toggleFocus()
   if self.hasFocus then
     self.tween = tween.new(1, self, { y = 0 }, 'inBounce')
   else
-    local y1 = -1 * (1 + self.nLines) * self.font:getHeight()
-    self.tween = tween.new(1, self, { y = y1  }, 'outExpo')
+    local _, y1 = self:getDimensions()
+    self.tween = tween.new(1, self, { y = -y1  }, 'outExpo')
   end
 end
 
@@ -109,10 +115,11 @@ function console:draw()
   if not self.hasFocus and self.tweenIsComplete then return end
 
   local height = self.font:getHeight()
+  local w, h = console:getDimensions()
 
   --draw console background
   love.graphics.setColor(self.bgColor)
-  love.graphics.rectangle('fill', self.x, self.y, love.graphics.getWidth(), (1+self.nLines)*height)
+  love.graphics.rectangle('fill', self.x, self.y, w, h )
 
   -- draw prompt, cursor,  and any input
   love.graphics.setColor(self.fgColor)
